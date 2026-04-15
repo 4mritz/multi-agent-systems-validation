@@ -1,0 +1,157 @@
+{
+  "scenario_id": "f7e8d9c0-b1a2-3456-fedc-ba9876543210",
+  "title": "G7 Coordinated Rate Shock",
+  "description": "Synchronized 200bps rate increase across all G7 central banks to combat 9.4 percent global CPI",
+  "seed_document_path": "experiments/scenarios/rate_shock_seed.txt",
+  "event_type": "coordinated_rate_shock",
+  "actor_profiles": [
+    {
+      "actor_id": "f1c1c1c1-1111-4aaa-ffff-111111111111",
+      "actor_name": "Federal Reserve",
+      "actor_type": "central_bank",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.20,
+        "current_rate_pct": 5.25,
+        "target_rate_pct": 7.25,
+        "inflation_target_pct": 0.02,
+        "coordination_commitment_days": 180
+      },
+      "constraints": [
+        {
+          "constraint_id": "cf1c1c1c-1111-4ccc-ffff-111111111111",
+          "description": "Federal Reserve prohibited from policy loosening or seeking external support during coordination window",
+          "affected_actor_ids": ["f1c1c1c1-1111-4aaa-ffff-111111111111"],
+          "prohibited_actions": ["policy_loosen", "seek_external_support"]
+        }
+      ],
+      "decision_priorities": ["inflation_control", "financial_stability", "coordination_commitment"]
+    },
+    {
+      "actor_id": "f2c2c2c2-2222-4bbb-ffff-222222222222",
+      "actor_name": "European Central Bank",
+      "actor_type": "central_bank",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.18,
+        "current_rate_pct": 4.50,
+        "target_rate_pct": 6.50,
+        "inflation_target_pct": 0.02,
+        "coordination_commitment_days": 180
+      },
+      "constraints": [
+        {
+          "constraint_id": "cf2c2c2c-2222-4ccc-ffff-222222222222",
+          "description": "ECB prohibited from policy loosening or reducing reserves during coordination window",
+          "affected_actor_ids": ["f2c2c2c2-2222-4bbb-ffff-222222222222"],
+          "prohibited_actions": ["policy_loosen", "decrease_reserves"]
+        }
+      ],
+      "decision_priorities": ["price_stability", "eurozone_cohesion", "coordination_commitment"]
+    },
+    {
+      "actor_id": "f3c3c3c3-3333-4ccc-ffff-333333333333",
+      "actor_name": "Global Investment Bank",
+      "actor_type": "financial_institution",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.40,
+        "leverage_ratio": 13.5,
+        "max_leverage_ratio": 15.0,
+        "fixed_income_portfolio_usd": 450000000000,
+        "margin_call_threshold_leverage": 14.0
+      },
+      "constraints": [
+        {
+          "constraint_id": "cf3c3c3c-3333-4ccc-ffff-333333333333",
+          "description": "Investment bank cannot increase spending or reserves during deleveraging",
+          "affected_actor_ids": ["f3c3c3c3-3333-4ccc-ffff-333333333333"],
+          "prohibited_actions": ["increase_spending", "increase_reserves"]
+        }
+      ],
+      "decision_priorities": ["deleveraging", "margin_compliance", "portfolio_risk_reduction"]
+    }
+  ],
+  "constraints": [
+    {
+      "constraint_id": "sr1d1d1d-1111-4ddd-ffff-111111111111",
+      "description": "G7 central banks prohibited from policy loosening during 180-day coordination window",
+      "constraint_type": "behavioral_rule",
+      "affected_claim_types": ["behavioral"],
+      "affected_actor_ids": [
+        "f1c1c1c1-1111-4aaa-ffff-111111111111",
+        "f2c2c2c2-2222-4bbb-ffff-222222222222"
+      ],
+      "parameters": {
+        "prohibited_window_days": 180
+      },
+      "severity": "hard"
+    },
+    {
+      "constraint_id": "sr2d2d2d-2222-4ddd-ffff-222222222222",
+      "description": "Household debt service ratio must not exceed 40 percent of disposable income",
+      "constraint_type": "quantitative_bound",
+      "affected_claim_types": ["quantitative"],
+      "affected_actor_ids": [
+        "f1c1c1c1-1111-4aaa-ffff-111111111111",
+        "f2c2c2c2-2222-4bbb-ffff-222222222222",
+        "f3c3c3c3-3333-4ccc-ffff-333333333333"
+      ],
+      "parameters": {
+        "max_household_debt_service_ratio": 0.40
+      },
+      "severity": "hard"
+    },
+    {
+      "constraint_id": "sr3d3d3d-3333-4ddd-ffff-333333333333",
+      "description": "Investment bank leverage ratio must not exceed 15.0x",
+      "constraint_type": "quantitative_bound",
+      "affected_claim_types": ["quantitative"],
+      "affected_actor_ids": ["f3c3c3c3-3333-4ccc-ffff-333333333333"],
+      "parameters": {
+        "max_leverage_ratio": 15.0
+      },
+      "severity": "soft"
+    }
+  ],
+  "injected_errors": [
+    {
+      "injection_id": "inj-rate-001-aaaa-aaaa-aaaaaaaaaaaa",
+      "target_agent": 2,
+      "target_claim_type": "behavioral",
+      "injected_value": "policy_loosen",
+      "correct_value": "policy_tighten",
+      "description": "Federal Reserve forced to policy_loosen violating hard behavioral rule during coordination window"
+    },
+    {
+      "injection_id": "inj-rate-002-bbbb-bbbb-bbbbbbbbbbbb",
+      "target_agent": 1,
+      "target_claim_type": "quantitative",
+      "injected_value": "0.52",
+      "correct_value": "0.386",
+      "description": "Household debt service ratio set to 52 percent exceeding hard max of 40 percent"
+    },
+    {
+      "injection_id": "inj-rate-003-cccc-cccc-cccccccccccc",
+      "target_agent": 3,
+      "target_claim_type": "causal",
+      "injected_value": "inflation_decrease",
+      "correct_value": "inflation_persistence",
+      "description": "Causal direction reversed — rate hike causes immediate inflation decrease contradicting economic mechanics"
+    },
+    {
+      "injection_id": "inj-rate-004-dddd-dddd-dddddddddddd",
+      "target_agent": 2,
+      "target_claim_type": "behavioral",
+      "injected_value": "increase_reserves",
+      "correct_value": "decrease_reserves",
+      "description": "Investment bank forced to increase_reserves during deleveraging violating constraint"
+    },
+    {
+      "injection_id": "inj-rate-005-eeee-eeee-eeeeeeeeeeee",
+      "target_agent": 1,
+      "target_claim_type": "quantitative",
+      "injected_value": "200",
+      "correct_value": "7.25",
+      "description": "Federal Funds Rate set to 200 percent instead of 7.25 percent — magnitude error"
+    }
+  ],
+  "created_at": "2024-12-15T00:00:00.000000"
+}

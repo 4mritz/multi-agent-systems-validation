@@ -1,0 +1,14 @@
+POLICY BRIEF — BANK OF JAPAN EMERGENCY TREASURY LIQUIDATION
+
+Classification: Market Sensitive | Distribution: Institutional Only
+Date: Q4 2024
+
+The Bank of Japan has announced an emergency liquidation of USD 200 billion in US Treasury securities over a 30-day window to defend the Japanese Yen against accelerating depreciation. The USD/JPY exchange rate breached 182 on Tuesday, triggering automatic intervention protocols under the BOJ's currency stability mandate. The liquidation will be executed through primary dealers at a target rate of USD 6.7 billion per trading day.
+
+BOJ Governor Kazuo Ueda stated the intervention is necessary to prevent imported inflation from destabilizing Japan's domestic price targets. The Governor emphasized that the current rate of Yen depreciation threatens to push Japan's CPI above its 2 percent target by a cumulative 3.8 percentage points through import price pass-through effects alone.
+
+The operation is expected to push US 10-year Treasury yields upward by 150 to 200 basis points within 30 days as supply overwhelms demand at current price levels. Primary dealers are required under Basel III frameworks to maintain treasury holdings above 5 percent of total assets, creating a structural floor on absorption capacity estimated at USD 340 billion across the primary dealer network. This absorption capacity constraint means that approximately 59 percent of the liquidation volume must be absorbed by non-primary-dealer market participants including pension funds, insurance companies, and foreign central banks.
+
+The Federal Reserve has declined to comment on coordinated intervention. Analysts at Goldman Sachs estimate a 73 percent probability of yield curve inversion in the 2-to-10 year spread within 45 days. Southeast Asian central banks with USD-pegged currencies are expected to face secondary pressure as treasury yields rise, potentially triggering a cascade of reserve drawdowns across the region.
+
+The Japanese Ministry of Finance has authorized the operation under Article 7 of the Foreign Exchange and Foreign Trade Act. Market participants should expect elevated volatility in USD/JPY, with a 3-sigma daily move probability increasing from 2 percent to 11 percent during the intervention window. Credit default swap spreads on Japanese sovereign debt have widened 45 basis points since the announcement, reflecting increased perception of fiscal risk associated with the reserve drawdown.

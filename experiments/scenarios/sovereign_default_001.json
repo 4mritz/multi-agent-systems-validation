@@ -1,0 +1,157 @@
+{
+  "scenario_id": "d4e5f6a7-b8c9-0123-defa-456789abcdef",
+  "title": "Brazilian Sovereign Debt Default",
+  "description": "Brazil misses USD 2.3B coupon payment triggering ISDA technical default and EM contagion",
+  "seed_document_path": "experiments/scenarios/sovereign_default_seed.txt",
+  "event_type": "sovereign_default",
+  "actor_profiles": [
+    {
+      "actor_id": "d1b1b1b1-1111-4aaa-dddd-111111111111",
+      "actor_name": "International Monetary Fund",
+      "actor_type": "international_org",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.20,
+        "rapid_financing_capacity_usd": 80000000000,
+        "conditionality_requirement": true,
+        "structural_adjustment_target_gdp_pct": 0.045
+      },
+      "constraints": [
+        {
+          "constraint_id": "cd1b1b1b-1111-4ccc-dddd-111111111111",
+          "description": "IMF must deploy emergency lending when devaluation exceeds threshold — cannot remain inactive",
+          "affected_actor_ids": ["d1b1b1b1-1111-4aaa-dddd-111111111111"],
+          "prohibited_actions": ["halt_operations", "maintain_status_quo"]
+        }
+      ],
+      "decision_priorities": ["systemic_stability", "conditional_lending", "contagion_prevention"]
+    },
+    {
+      "actor_id": "d2b2b2b2-2222-4bbb-dddd-222222222222",
+      "actor_name": "Brazilian Pension Funds",
+      "actor_type": "household_sector",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.05,
+        "fixed_income_dependency": 0.23,
+        "total_assets_usd": 340000000000,
+        "sovereign_exposure_pct": 0.23,
+        "insolvency_threshold_recovery_rate": 0.40
+      },
+      "constraints": [
+        {
+          "constraint_id": "cd2b2b2b-2222-4ccc-dddd-222222222222",
+          "description": "Pension funds cannot increase spending or reduce reserves during sovereign crisis",
+          "affected_actor_ids": ["d2b2b2b2-2222-4bbb-dddd-222222222222"],
+          "prohibited_actions": ["increase_spending", "decrease_reserves"]
+        }
+      ],
+      "decision_priorities": ["capital_preservation", "beneficiary_protection", "liquidity_maintenance"]
+    },
+    {
+      "actor_id": "d3b3b3b3-3333-4ccc-dddd-333333333333",
+      "actor_name": "Petrobras",
+      "actor_type": "corporation",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.30,
+        "external_credit_dependency": 0.65,
+        "state_ownership_pct": 0.36,
+        "international_credit_lines_frozen": true
+      },
+      "constraints": [
+        {
+          "constraint_id": "cd3b3b3b-3333-4ccc-dddd-333333333333",
+          "description": "Petrobras cannot increase spending while credit lines are frozen",
+          "affected_actor_ids": ["d3b3b3b3-3333-4ccc-dddd-333333333333"],
+          "prohibited_actions": ["increase_spending"]
+        }
+      ],
+      "decision_priorities": ["operational_continuity", "debt_service", "credit_restoration"]
+    }
+  ],
+  "constraints": [
+    {
+      "constraint_id": "sd1c1c1c-1111-4ddd-dddd-111111111111",
+      "description": "CDS spreads must not exceed 2000 basis points before triggering full capital flight classification",
+      "constraint_type": "quantitative_bound",
+      "affected_claim_types": ["quantitative"],
+      "affected_actor_ids": [
+        "d1b1b1b1-1111-4aaa-dddd-111111111111",
+        "d2b2b2b2-2222-4bbb-dddd-222222222222",
+        "d3b3b3b3-3333-4ccc-dddd-333333333333"
+      ],
+      "parameters": {
+        "max_cds_spread_bps": 2000
+      },
+      "severity": "soft"
+    },
+    {
+      "constraint_id": "sd2c2c2c-2222-4ddd-dddd-222222222222",
+      "description": "IMF must trigger emergency lending when currency devaluation exceeds 15 percent",
+      "constraint_type": "behavioral_rule",
+      "affected_claim_types": ["behavioral"],
+      "affected_actor_ids": ["d1b1b1b1-1111-4aaa-dddd-111111111111"],
+      "parameters": {
+        "devaluation_threshold_pct": 0.15
+      },
+      "severity": "hard"
+    },
+    {
+      "constraint_id": "sd3c3c3c-3333-4ddd-dddd-333333333333",
+      "description": "Sovereign default must cause capital flight — causal direction is invariant",
+      "constraint_type": "causal_invariant",
+      "affected_claim_types": ["causal"],
+      "affected_actor_ids": [
+        "d1b1b1b1-1111-4aaa-dddd-111111111111",
+        "d2b2b2b2-2222-4bbb-dddd-222222222222",
+        "d3b3b3b3-3333-4ccc-dddd-333333333333"
+      ],
+      "parameters": {
+        "causal_direction": "default_causes_capital_flight",
+        "invariant": true
+      },
+      "severity": "hard"
+    }
+  ],
+  "injected_errors": [
+    {
+      "injection_id": "inj-sov-001-aaaa-aaaa-aaaaaaaaaaaa",
+      "target_agent": 1,
+      "target_claim_type": "quantitative",
+      "injected_value": "800",
+      "correct_value": "1847",
+      "description": "CDS spread understated — 800bps instead of actual 1847bps, masking severity of default"
+    },
+    {
+      "injection_id": "inj-sov-002-bbbb-bbbb-bbbbbbbbbbbb",
+      "target_agent": 1,
+      "target_claim_type": "factual",
+      "injected_value": "0.12",
+      "correct_value": "0.34",
+      "description": "Real depreciation understated — 12 percent instead of 34 percent, minimizing crisis severity"
+    },
+    {
+      "injection_id": "inj-sov-003-cccc-cccc-cccccccccccc",
+      "target_agent": 2,
+      "target_claim_type": "behavioral",
+      "injected_value": "maintain_status_quo",
+      "correct_value": "seek_external_support",
+      "description": "IMF forced to maintain_status_quo violating hard behavioral rule requiring emergency lending"
+    },
+    {
+      "injection_id": "inj-sov-004-dddd-dddd-dddddddddddd",
+      "target_agent": 2,
+      "target_claim_type": "behavioral",
+      "injected_value": "increase_spending",
+      "correct_value": "halt_operations",
+      "description": "Petrobras forced to increase_spending despite frozen credit lines violating constraint"
+    },
+    {
+      "injection_id": "inj-sov-005-eeee-eeee-eeeeeeeeeeee",
+      "target_agent": 3,
+      "target_claim_type": "causal",
+      "injected_value": "capital_inflow",
+      "correct_value": "capital_flight",
+      "description": "Causal direction inverted — default causes capital inflow contradicting causal invariant"
+    }
+  ],
+  "created_at": "2024-12-15T00:00:00.000000"
+}

@@ -1,0 +1,146 @@
+{
+  "scenario_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "title": "BOJ Treasury Liquidation Crisis",
+  "description": "Bank of Japan emergency liquidation of USD 200B in US Treasuries to defend Yen parity",
+  "seed_document_path": "experiments/scenarios/boj_liquidation_seed.txt",
+  "event_type": "currency_intervention",
+  "actor_profiles": [
+    {
+      "actor_id": "b1a1a1a1-1111-4aaa-aaaa-111111111111",
+      "actor_name": "Bank of Japan",
+      "actor_type": "central_bank",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.15,
+        "policy_mandate": "currency_stability",
+        "reserve_threshold_usd": 800000000000
+      },
+      "constraints": [
+        {
+          "constraint_id": "c1a1a1a1-1111-4ccc-aaaa-111111111111",
+          "description": "Prohibited from unsterilized unilateral intervention exceeding daily limits",
+          "affected_actor_ids": ["b1a1a1a1-1111-4aaa-aaaa-111111111111"],
+          "prohibited_actions": ["increase_spending", "seek_external_support"]
+        }
+      ],
+      "decision_priorities": ["currency_stability", "inflation_control", "export_competitiveness"]
+    },
+    {
+      "actor_id": "b2a2a2a2-2222-4bbb-bbbb-222222222222",
+      "actor_name": "Primary Dealer Network",
+      "actor_type": "financial_institution",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.35,
+        "basel_iii_capital_floor": 0.05,
+        "treasury_holding_floor_pct": 0.05
+      },
+      "constraints": [
+        {
+          "constraint_id": "c2a2a2a2-2222-4ccc-bbbb-222222222222",
+          "description": "Cannot reduce treasury holdings below 5 percent of total assets",
+          "affected_actor_ids": ["b2a2a2a2-2222-4bbb-bbbb-222222222222"],
+          "prohibited_actions": ["decrease_reserves", "halt_operations"]
+        }
+      ],
+      "decision_priorities": ["liquidity_management", "capital_preservation", "regulatory_compliance"]
+    },
+    {
+      "actor_id": "b3a3a3a3-3333-4ccc-cccc-333333333333",
+      "actor_name": "US Treasury",
+      "actor_type": "government",
+      "behavioral_parameters": {
+        "risk_tolerance": 0.25,
+        "debt_sustainability_target": 1.0,
+        "auction_frequency": "weekly"
+      },
+      "constraints": [],
+      "decision_priorities": ["debt_sustainability", "market_stability", "foreign_policy"]
+    }
+  ],
+  "constraints": [
+    {
+      "constraint_id": "sc1a1a1a-1111-4ddd-aaaa-111111111111",
+      "description": "Daily treasury yield volatility must not exceed 50 basis points",
+      "constraint_type": "quantitative_bound",
+      "affected_claim_types": ["quantitative"],
+      "affected_actor_ids": [
+        "b1a1a1a1-1111-4aaa-aaaa-111111111111",
+        "b2a2a2a2-2222-4bbb-bbbb-222222222222",
+        "b3a3a3a3-3333-4ccc-cccc-333333333333"
+      ],
+      "parameters": {
+        "max_daily_yield_volatility_bps": 50
+      },
+      "severity": "hard"
+    },
+    {
+      "constraint_id": "sc2a2a2a-2222-4ddd-bbbb-222222222222",
+      "description": "Primary dealers must maintain treasury holdings above 5 percent of total assets",
+      "constraint_type": "behavioral_rule",
+      "affected_claim_types": ["behavioral"],
+      "affected_actor_ids": ["b2a2a2a2-2222-4bbb-bbbb-222222222222"],
+      "parameters": {
+        "min_treasury_holding_pct": 0.05
+      },
+      "severity": "hard"
+    },
+    {
+      "constraint_id": "sc3a3a3a-3333-4ddd-cccc-333333333333",
+      "description": "Treasury yield increases must correlate positively with liquidation volume",
+      "constraint_type": "causal_invariant",
+      "affected_claim_types": ["causal"],
+      "affected_actor_ids": [
+        "b1a1a1a1-1111-4aaa-aaaa-111111111111",
+        "b2a2a2a2-2222-4bbb-bbbb-222222222222",
+        "b3a3a3a3-3333-4ccc-cccc-333333333333"
+      ],
+      "parameters": {
+        "correlation_direction": "positive",
+        "min_correlation": 0.6
+      },
+      "severity": "soft"
+    }
+  ],
+  "injected_errors": [
+    {
+      "injection_id": "inj-boj-001-aaaa-aaaa-aaaaaaaaaaaa",
+      "target_agent": 1,
+      "target_claim_type": "quantitative",
+      "injected_value": "2000000000000",
+      "correct_value": "200000000000",
+      "description": "Liquidation volume inflated 10x from 200B to 2T USD in Agent 1 extracted claims"
+    },
+    {
+      "injection_id": "inj-boj-002-bbbb-bbbb-bbbbbbbbbbbb",
+      "target_agent": 1,
+      "target_claim_type": "quantitative",
+      "injected_value": "-150",
+      "correct_value": "150",
+      "description": "Yield impact sign flipped — negative 150bps instead of positive 150bps"
+    },
+    {
+      "injection_id": "inj-boj-003-cccc-cccc-cccccccccccc",
+      "target_agent": 2,
+      "target_claim_type": "behavioral",
+      "injected_value": "decrease_reserves",
+      "correct_value": "maintain_status_quo",
+      "description": "Primary Dealer forced to decrease_reserves violating Basel III constraint"
+    },
+    {
+      "injection_id": "inj-boj-004-dddd-dddd-dddddddddddd",
+      "target_agent": 2,
+      "target_claim_type": "behavioral",
+      "injected_value": "policy_loosen",
+      "correct_value": "policy_tighten",
+      "description": "BOJ forced to policy_loosen contradicting currency stability mandate"
+    },
+    {
+      "injection_id": "inj-boj-005-eeee-eeee-eeeeeeeeeeee",
+      "target_agent": 3,
+      "target_claim_type": "causal",
+      "injected_value": "yield_decrease",
+      "correct_value": "yield_increase",
+      "description": "Causal direction inverted — liquidation causes yield decrease contradicting causal invariant constraint"
+    }
+  ],
+  "created_at": "2024-12-15T00:00:00.000000"
+}

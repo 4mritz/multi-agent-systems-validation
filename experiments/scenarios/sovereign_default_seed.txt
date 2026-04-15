@@ -1,0 +1,12 @@
+FINANCIAL NEWS REPORT — BRAZILIAN SOVEREIGN DEBT DEFAULT
+
+Reuters | São Paulo Bureau | Immediate Release
+Date: Q4 2024
+
+Brazil has missed a USD 2.3 billion coupon payment on its 2031 dollar-denominated sovereign bonds, triggering a technical default under ISDA definitions after a 72-hour grace period expired without payment. The default follows a six-month deterioration in Brazil's fiscal position driven by commodity price collapse and a 34 percent depreciation of the Brazilian Real against the USD. This represents the largest sovereign default in Latin American history by nominal value and the first Brazilian sovereign default since 1987.
+
+The IMF convened an emergency session of its Executive Board on Thursday to assess systemic contagion risk across Latin American emerging markets. IMF Managing Director Kristalina Georgieva indicated the Fund stands ready to deploy up to USD 80 billion through its Rapid Financing Instrument contingent on Brazil's agreement to a structural adjustment program. The proposed adjustment program would require fiscal consolidation of 4.5 percent of GDP over three years.
+
+Credit default swap spreads on Brazilian sovereign debt have spiked to 1,847 basis points, approaching the 2,000 basis point threshold that historically precedes full capital flight. Brazilian pension funds hold approximately USD 340 billion in domestic fixed income instruments, of which an estimated 23 percent is directly exposed to sovereign bonds now trading at 31 cents on the dollar. The pension system faces potential insolvency if bond recovery rates fall below 40 cents, threatening retirement security for 38 million beneficiaries.
+
+Petrobras, Brazil's state-controlled energy company, has seen its international credit lines frozen by three major correspondent banks pending resolution of the sovereign default. The Brazilian Real has depreciated an additional 12 percent since the default announcement, compounding external debt service obligations across the corporate sector. Moody's downgraded Brazil's sovereign rating from Ba2 to Ca, the penultimate level before default. The Brazilian central bank intervened in FX markets deploying USD 14 billion in reserves in the 48 hours following the announcement. Contagion signals are visible in Argentine, Colombian, and Chilean sovereign spreads which have widened 180 to 340 basis points in sympathy.

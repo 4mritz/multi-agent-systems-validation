@@ -44,9 +44,13 @@ Both pipelines are LangGraph `StateGraph` instances compiled from `PipelineState
 - **`pipeline/graph.py`** — validated pipeline (exposed as `validated_graph`)
 - **`pipeline/baseline.py`** — baseline pipeline without validators (exposed as `baseline_graph`)
 - **`agents/`** — one module per agent node (scenario_analysis, actor_modeling, impact_assessment, decision_synthesis)
-- **`validators/`** — validator nodes in `validator_nodes.py`; deterministic checks (Classes 1-3) in `deterministic.py`, LLM-based checks (Classes 4-5) in `llm_validator.py`
+- **`validators/deterministic.py`** — deterministic validation engine (Classes 1-3). Entry point `validate_claim(claim_data, scenario, ledger)` runs five sequential checks returning `List[ValidationCheckResult]`: (1) schema validation via `ClaimFactory`, (2) scope matching against `ScenarioConstraint.affected_claim_types`, (3) quantitative bound enforcement using `min_`/`max_` prefixed keys in constraint parameters vs claim parameters, (4) behavioral consistency checking `BehavioralClaim.predicted_action` against `Constraint.prohibited_actions` on the matching `ActorProfile`, (5) ledger contradiction detection comparing numeric parameters of same-type/same-entity claims with `TOLERANCE = 0.01` relative difference threshold. Hard severity → "rejected", soft severity → "flagged". Check 5 always runs regardless of Check 2 result. Early return only on Check 1 rejection.
+- **`validators/llm_validator.py`** — LLM-based checks (Classes 4-5), to be implemented
+- **`validators/validator_nodes.py`** — validator graph nodes that wire deterministic and LLM checks into the pipeline
 - **`ledger.py`** — `ClaimLedger` class for tracking claims with filtering by agent, step, type, and validation status
 - **`config.py`** — LLM backend config; supports `ollama` (default, llama3.1) and `gemini` (via OpenRouter)
 - **`llm_client.py`** — `get_llm()` factory that returns a LangChain chat model based on `LLM_BACKEND`
-- **`schemas/`** — Pydantic schemas for claims, agent outputs, and scenarios
+- **`schemas/claims.py`** — `BaseClaim` and four subtypes (`FactualClaim`, `BehavioralClaim`, `CausalClaim`, `QuantitativeClaim`), `ClaimFactory` for dict→subclass reconstruction, and `CLAIM_TYPE_MAP`
+- **`schemas/agent_outputs.py`** — output schemas for all four pipeline agents (`Agent1Output`–`Agent4Output`) and helper models (`Constraint`, `ActorResponse`, `SystemicEffect`, `KeyFinding`). `Constraint.prohibited_actions` is validated against the nine `BehavioralClaim.predicted_action` values via a Pydantic field validator. `ActorResponse` keeps its own `extracted_claims` separate from the parent agent output's top-level `extracted_claims`.
+- **`schemas/scenario.py`** — ground truth and identity layer: `ActorProfile`, `ScenarioConstraint`, `Scenario` models with `ActorType`, `ConstraintType`, `Severity` enums. `ScenarioConstraint` uses hard/soft severity to control reject vs flag behavior in deterministic validators. `Scenario.injected_errors` is populated only for adversarial test runs.
 - **`experiments/`** — experiment runner, metrics, scenario files, actor profiles, and injection data

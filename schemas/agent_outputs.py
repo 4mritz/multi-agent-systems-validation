@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from mas_validation.schemas.claims import (
     BaseClaim,
@@ -17,10 +17,35 @@ from mas_validation.schemas.claims import (
 # ---------------------------------------------------------------------------
 
 
+VALID_PREDICTED_ACTIONS = {
+    "increase_reserves",
+    "decrease_reserves",
+    "increase_spending",
+    "decrease_spending",
+    "policy_tighten",
+    "policy_loosen",
+    "halt_operations",
+    "seek_external_support",
+    "maintain_status_quo",
+}
+
+
 class Constraint(BaseModel):
     constraint_id: str
     description: str
     affected_actor_ids: list[str]
+    prohibited_actions: list[str] = Field(default_factory=list)
+
+    @field_validator("prohibited_actions")
+    @classmethod
+    def check_prohibited_actions(cls, v: list[str]) -> list[str]:
+        invalid = [a for a in v if a not in VALID_PREDICTED_ACTIONS]
+        if invalid:
+            raise ValueError(
+                f"Invalid prohibited_actions: {invalid}. "
+                f"Must be one of {sorted(VALID_PREDICTED_ACTIONS)}"
+            )
+        return v
 
 
 class ActorResponse(BaseModel):
@@ -206,11 +231,13 @@ if __name__ == "__main__":
                 constraint_id="foreign_reserve_floor_800B",
                 description="BOJ cannot liquidate below $800B foreign reserve floor",
                 affected_actor_ids=["bank_of_japan"],
+                prohibited_actions=["halt_operations", "increase_spending"],
             ),
             Constraint(
                 constraint_id="usjp_alliance_obligations",
                 description="US-Japan security alliance constrains aggressive sell-off",
                 affected_actor_ids=["bank_of_japan", "us_federal_reserve"],
+                prohibited_actions=["decrease_reserves"],
             ),
         ],
         extracted_claims=[factual_1.model_dump(), factual_2.model_dump()],
@@ -462,5 +489,18 @@ if __name__ == "__main__":
     except ValidationError:
         error_count += 1
         print("  Constraint     missing description      -> ValidationError OK")
+
+    # Constraint: invalid prohibited_actions value
+    try:
+        Constraint(
+            constraint_id="x",
+            description="x",
+            affected_actor_ids=[],
+            prohibited_actions=["decrease_reserves", "nuke_economy"],
+        )
+        assert False, "Should have raised ValidationError"
+    except ValidationError:
+        error_count += 1
+        print("  Constraint     prohibited_actions='nuke_economy' -> ValidationError OK")
 
     print(f"\n  All {error_count} validation error checks passed.")

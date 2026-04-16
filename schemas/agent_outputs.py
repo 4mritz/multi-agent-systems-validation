@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+from typing import Optional
+
 from pydantic import BaseModel, Field, field_validator
 
 from mas_validation.schemas.claims import (
@@ -53,7 +55,7 @@ class ActorResponse(BaseModel):
     response_summary: str
     predicted_actions: list[dict]  # BehavioralClaim.model_dump() dicts
     confidence_score: float = Field(ge=0.0, le=1.0)
-    extracted_claims: list[dict]  # BaseClaim.model_dump() dicts
+    extracted_claims: list[dict] = Field(default_factory=list) # BaseClaim.model_dump() dicts
 
 
 class SystemicEffect(BaseModel):
@@ -100,8 +102,8 @@ class Agent4Output(BaseModel):
     executive_summary: str
     key_findings: list[KeyFinding]
     flagged_uncertainties: list[str]
-    overall_confidence: float = Field(ge=0.0, le=1.0)
-    extracted_claims: list[dict]  # claims supporting final synthesis
+    overall_confidence: Optional[float] = Field(default=0.0, ge=0.0, le=1.0)
+    extracted_claims: list[dict] = Field(default_factory=list)  # claims supporting final synthesis
 
 
 if __name__ == "__main__":

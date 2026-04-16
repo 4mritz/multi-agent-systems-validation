@@ -59,7 +59,7 @@ Output a JSON object matching this exact schema:
   "flagged_uncertainties": [
     "<string — each string describes a claim that was flagged by the validation layer>"
   ],
-  "overall_confidence": <float — you may provide a value but it will be recalculated by the system>,
+  "overall_confidence": 0.0,
   "extracted_claims": [<any additional synthesis claims>]
 }}
 
